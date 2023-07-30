@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect,request
 from event_tracker import app
 from event_tracker.forms import RegistrationForm, LoginForm
 from event_tracker.models import User, Post
-
+from event_tracker.news import fetch_global_news
 
 posts = [
     {
@@ -23,7 +23,10 @@ posts = [
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts=posts)
+    global_news = fetch_global_news()
+    print(global_news)
+
+    return render_template('home.html', posts=posts, global_news=global_news)
 
 
 @app.route("/about")

@@ -12,4 +12,21 @@
           </div>
         </article>
     {% endfor %}
+    <h1>Global Event Tracker</h1>
+    <h2>Global News Feed</h2>
+
+    <ul>
+      {% for data_point in global_news['data'] %}
+  <li>
+    <p>Date: {{ data_point['date'] }}</p>
+    <p>Value: {{ data_point['value'] }}</p>
+    <ul>
+      {% for topart in data_point['toparts'] %}
+        <li><a href="{{ topart['url'] }}">{{ topart['title'] }}</a></li>
+      {% endfor %}
+    </ul>
+  </li>
+{% endfor %}
+
+  </ul>
 {% endblock content %}
