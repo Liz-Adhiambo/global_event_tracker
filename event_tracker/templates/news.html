@@ -1,0 +1,17 @@
+<!-- news.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ category.capitalize() }} News</title>
+</head>
+<body>
+    <h1>{{ category.capitalize() }} News</h1>
+    <ul>
+        {% for article in articles %}
+        <li>
+            <a href="{{ article.url }}" target="_blank">{{ article.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import requests
 
-def get_gdelt_data():
+def get_gdelt_data(location=None, language=None):
     url = "https://api.gdeltproject.org/api/v2/doc/doc"
     params = {
         "query": "domain:news",
@@ -8,9 +8,17 @@ def get_gdelt_data():
         "TIMELINESMOOTH": "5",
         "FORMAT": "json",
     }
+
+    if location:
+        params["location"] = location
+
+    if language:
+        params["language"] = language
+
     response = requests.get(url, params=params)
     data = response.json()
-    data=data['timeline'][0]
-    data['data'][0]['toparts']
     
-    return data
+    if 'timeline' in data and len(data['timeline']) > 0:
+        return data['timeline'][0]
+    else:
+        return None

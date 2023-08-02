@@ -23,27 +23,73 @@ posts = [
 API_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 API_KEY='pub_27092853c6eab6081ead2dce47bcf3adce0ec'
 
-@app.route("/")
-@app.route("/home")
-def home():
+NEWS_API_KEY = '77778d372be048dc9186f0621247ab9f'
+NEWS_API_BASE_URL = 'https://newsapi.org/v2/top-headlines'
 
-    posts=requests.get('https://newsdata.io/api/1/news?apikey=pub_27092853c6eab6081ead2dce47bcf3adce0ec&q=sport')
-    posts=posts.json()
-    news=posts['results']
-    print(posts['results'])
+# @app.route("/")
+# @app.route("/home")
+# def home():
 
-    return render_template('home.html', news=news)
+#     posts=requests.get('https://newsdata.io/api/1/news?apikey=pub_27092853c6eab6081ead2dce47bcf3adce0ec&q=sport')
+#     posts=posts.json()
+#     news=posts['results']
+#     print(posts['results'])
+
+#     return render_template('home.html', news=news)
+
+@app.route('/')
+def index():
+    params = {
+        'apiKey': NEWS_API_KEY,
+          # Fetch top 10 articles
+    }
+    response = requests.get('https://newsapi.org/v2/everything?q=keyword&apiKey=77778d372be048dc9186f0621247ab9f')
+    print(response)
+    if response.status_code == 200:
+        data = response.json()
+        top_articles = data.get('articles', [])
+    else:
+        return 'Error fetching news.', 500
+
+    return render_template('index.html', top_articles=top_articles)
+
+
+@app.route('/news/<category>')
+def get_news_by_category(category):
+    params = {
+        'apiKey': NEWS_API_KEY,
+        'category': category
+    }
+    response = requests.get(NEWS_API_BASE_URL, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        articles = data.get('articles', [])
+        return render_template('news.html', articles=articles, category=category)
+    else:
+        return 'Error fetching news.', 500
+
+
 
 @app.route("/news", methods=["GET"])
 def get_news():
-    global_news = get_gdelt_data()
-    global_news=global_news['data'][0]['toparts']
+    try:
+        location = request.args.get("location", None)
+        language = request.args.get("language", None)
 
-   
-    return render_template("new.html", articles=global_news)
+        print("Location:", location)
+        print("Language:", language)
 
+        global_news = get_gdelt_data(location, language)
 
+        if global_news:
+            top_articles = global_news['data'][0]['toparts']
+            return render_template("new.html", articles=top_articles)
+        else:
+            return "No news data available for the specified criteria."
 
+    except Exception as e:
+        print("Error:", e)
+        return "An error occurred."
 
 @app.route("/about")
 def about():
