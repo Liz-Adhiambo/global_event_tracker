@@ -1,6 +1,6 @@
 import requests
 
-def fetch_global_news():
+def get_gdelt_data():
     url = "https://api.gdeltproject.org/api/v2/doc/doc"
     params = {
         "query": "domain:news",
@@ -10,4 +10,7 @@ def fetch_global_news():
     }
     response = requests.get(url, params=params)
     data = response.json()
-    return data.get("timeline", [])
+    data=data['timeline'][0]
+    data['data'][0]['toparts']
+    
+    return data

@@ -2,7 +2,9 @@ from flask import render_template, url_for, flash, redirect,request
 from event_tracker import app
 from event_tracker.forms import RegistrationForm, LoginForm
 from event_tracker.models import User, Post
-from event_tracker.news import fetch_global_news
+from event_tracker.news import get_gdelt_data
+import pandas as pd
+import requests
 
 posts = [
     {
@@ -18,15 +20,29 @@ posts = [
         'date_posted': 'April 21, 2018'
     }
 ]
-
+API_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
+API_KEY='pub_27092853c6eab6081ead2dce47bcf3adce0ec'
 
 @app.route("/")
 @app.route("/home")
 def home():
-    global_news = fetch_global_news()
-    print(global_news)
 
-    return render_template('home.html', posts=posts, global_news=global_news)
+    posts=requests.get('https://newsdata.io/api/1/news?apikey=pub_27092853c6eab6081ead2dce47bcf3adce0ec&q=sport')
+    posts=posts.json()
+    news=posts['results']
+    print(posts['results'])
+
+    return render_template('home.html', news=news)
+
+@app.route("/news", methods=["GET"])
+def get_news():
+    global_news = get_gdelt_data()
+    global_news=global_news['data'][0]['toparts']
+
+   
+    return render_template("new.html", articles=global_news)
+
+
 
 
 @app.route("/about")

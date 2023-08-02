@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in news %}
+    {% for post in articles %}
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.source_id }}</a>
+              <a class="mr-2" href="#">{{ post.title}}</a>
               <small class="text-muted">{{ post.pubDate }}</small>
             </div>
             <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
